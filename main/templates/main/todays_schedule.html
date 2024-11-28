@@ -8,8 +8,8 @@
     <ul>
       {% for schedule in schedules %}
       <li>
-        {{ schedule.truck.name }} ({{ schedule.truck.cuisine }}) - {{
-        schedule.location.name }} at {{ schedule.location.address }}
+        {{ schedule.truck.name }} ({{ schedule.truck.cuisine }}) - 
+        {{ schedule.location.name }} at {{ schedule.location.address }}
       </li>
       {% empty %}
       <li>No trucks scheduled for today.</li>
