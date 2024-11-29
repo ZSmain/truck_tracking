@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.urls import path
-from main import views
+from django.urls import path, include
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("schedule/today/", views.todays_schedule, name="todays_schedule"),
+    path("", include("main.urls"), name="main"),
 ]
