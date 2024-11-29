@@ -1,1 +1,10 @@
+# Enviroment variables:
 .venv
+
+# Django stuff:
+__pycache__/
+*.pyc
+*.py[cod]
+
+# Database:
+db.sqlite3
