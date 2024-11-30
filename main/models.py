@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.db.models import Q
 
 
 class Truck(models.Model):
@@ -41,24 +42,23 @@ class DailySchedule(models.Model):
         )
 
     def clean(self):
-        # Prevent double booking of locations
-        if (
-            DailySchedule.objects.filter(date=self.date, location=self.location)
-            .exclude(id=self.id)
-            .exists()
-        ):
-            raise ValidationError(
-                "This location is already booked for the selected date."
+        if self.id:
+            conflicts = (
+                DailySchedule.objects.filter(
+                    Q(date=self.date)
+                    & (Q(location=self.location) | Q(truck=self.truck))
+                )
+                .exclude(id=self.id)
+                .exists()
             )
+        else:
+            conflicts = DailySchedule.objects.filter(
+                Q(date=self.date) & (Q(location=self.location) | Q(truck=self.truck))
+            ).exists()
 
-        # Prevent a truck from being at multiple locations on the same day
-        if (
-            DailySchedule.objects.filter(date=self.date, truck=self.truck)
-            .exclude(id=self.id)
-            .exists()
-        ):
+        if conflicts:
             raise ValidationError(
-                "This truck is already scheduled for the selected date."
+                "Schedule conflict: The selected location or truck is already booked for this date."
             )
 
     def __str__(self):
