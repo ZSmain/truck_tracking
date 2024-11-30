@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Thirt party apps
+    "widget_tweaks",
     # Local Apps
     "main",
 ]
