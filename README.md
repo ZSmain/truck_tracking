@@ -40,3 +40,10 @@ This application helps track and manage daily food truck schedules, including th
     ```bash
     pnpm dev // or npm run dev
     ```
+
+## Testing
+
+To run the Django test suite for the DailySchedule model, run the following command:
+```bash
+python manage.py test main.tests
+```
