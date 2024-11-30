@@ -5,6 +5,7 @@
 __pycache__/
 *.pyc
 *.py[cod]
+staticfiles/
 
 # Node stuff:
 node_modules/
