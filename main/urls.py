@@ -1,6 +1,10 @@
 from django.urls import path
-from main import views
+
+from . import views
+
+
+app_name = "main"
 
 urlpatterns = [
-    path("schedule/today/", views.todays_schedule, name="todays_schedule"),
+    path("schedules/", views.schedule_list, name="schedule_list"),
 ]

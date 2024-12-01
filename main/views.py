@@ -1,41 +1,52 @@
-from django.shortcuts import render, redirect
+from itertools import groupby
+from operator import attrgetter
+
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from .models import DailySchedule
-from .forms import DailyScheduleForm
+from django.shortcuts import redirect, render
 from django.utils import timezone
 
-# Create your views here.
+from .forms import DailyScheduleForm
+from .models import DailySchedule
 
 
-def todays_schedule(request):
-    today = timezone.now().date()
+def schedule_list(request):
+    default_date = timezone.now().date()
 
     if request.method == "POST":
         form = DailyScheduleForm(request.POST)
         if form.is_valid():
             schedule = form.save(commit=False)
-            schedule.date = today
             try:
-                schedule.clean()
+                schedule.clean()  # This will trigger model validation
                 schedule.save()
                 messages.success(request, "Schedule created successfully!")
-                return redirect("todays_schedule")
+                return redirect("main:schedule_list")
             except ValidationError as e:
-                messages.error(request, e.message)
+                messages.error(request, str(e))
+                form = DailyScheduleForm(request.POST)  # Preserve the form data
         else:
-            # Handle specific form field errors
-            for field, errors in form.errors.items():
-                if field == "__all__":
-                    messages.error(request, errors[0])
-                else:
-                    messages.error(request, f"{field.title()}: {errors[0]}")
+            if form.non_field_errors():
+                messages.error(request, form.non_field_errors()[0])
     else:
         form = DailyScheduleForm()
 
-    schedules = DailySchedule.objects.filter(date=today).select_related(
-        "truck", "location"
+    schedules = (
+        DailySchedule.objects.filter(date__gte=default_date)
+        .select_related("truck", "location")
+        .order_by("date")
     )
+
+    grouped_schedules = {
+        date: list(items) for date, items in groupby(schedules, key=attrgetter("date"))
+    }
+
     return render(
-        request, "main/todays_schedule.html", {"schedules": schedules, "form": form}
+        request,
+        "main/schedule_list.html",
+        {
+            "grouped_schedules": grouped_schedules,
+            "form": form,
+            "today": default_date,
+        },
     )
