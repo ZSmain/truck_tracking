@@ -40,10 +40,19 @@ This application helps track and manage daily food truck schedules, including th
     ```bash
     pnpm dev // or npm run dev
     ```
-
 ## Testing
 
 To run the Django test suite for the DailySchedule model, run the following command:
 ```bash
 python manage.py test main.tests
 ```
+## Viewing Schedules
+
+1. Create a superuser:
+    To create a superuser, run the following command:
+    ```bash
+    python manage.py createsuperuser
+    ```
+    Follow the prompts to create a superuser account.
+2. Make sure the server is running and og in to the Django admin and create some schedules.
+3. Now you can view the current schedules at: http://127.0.0.1:8000/schedules/
